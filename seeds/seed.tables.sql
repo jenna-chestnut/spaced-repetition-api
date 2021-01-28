@@ -27,7 +27,7 @@ VALUES
   (4, 1, 'pomme', 'apple', 5),
   (5, 1, 'errer', 'wander', 6),
   (6, 1, 'la peinture', 'painting', 7),
-  (7, 1, 'lumière', 'light', 8),
+  (7, 1, 'lumiere', 'light', 8),
   (8, 1, 'acide', 'sour', 9),
   (9, 1, 'scintillait', 'sparkle', 10),
   (10, 1, 'abeille', 'bee', 11),
