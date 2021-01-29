@@ -87,7 +87,7 @@ languageRouter
     const h = req.language.head;
     const words = await getWords();
     const headWord = {};
-    Object.assign(headWord, words.find(el => el.id === h));
+    await Object.assign(headWord, words.find(el => el.id === h));
 
     const wordsLinkedList = new LinkedList();
     words.forEach((el => {
@@ -112,21 +112,25 @@ languageRouter
     }
 
     if (body.guess === headWord.translation) {
-      try{
-       wordsLinkedList.correct();
+      try {
+        await wordsLinkedList.correct();
         await LanguageService.updateUsersTotalScore(
         req.app.get('db'),
         req.user.id,
         req.language.total_score + 1,
         );
         const nextWord = await getNextWord();
-      
+        await LanguageService.updateUsersLanguageHead(
+          req.app.get('db'),
+          req.user.id,
+          nextWord.id
+          );
 
-        res.status(200).json({
+        return await res.status(200).json({
         nextWord: nextWord.original,
         totalScore: req.language.total_score + 1,
-        wordCorrectCount: headWord.correct_count + 1,
-        wordIncorrectCount: headWord.incorrect_count,
+        wordCorrectCount: nextWord.correct_count,
+        wordIncorrectCount: nextWord.incorrect_count,
         answer: headWord.translation,
         isCorrect: true
         })
@@ -138,14 +142,19 @@ languageRouter
 
     else {
       try {
-      wordsLinkedList.incorrect();
+      await wordsLinkedList.incorrect();
       const nextWord = await getNextWord();
+      await LanguageService.updateUsersLanguageHead(
+        req.app.get('db'),
+        req.user.id,
+        nextWord.id
+        );
       
-      res.status(200).json({
+      return await res.status(200).json({
         nextWord: nextWord.original,
         totalScore: req.language.total_score,
-        wordCorrectCount: headWord.correct_count,
-        wordIncorrectCount: headWord.incorrect_count + 1,
+        wordCorrectCount: nextWord.correct_count,
+        wordIncorrectCount: nextWord.incorrect_count,
         answer: headWord.translation,
         isCorrect: false
       })
@@ -154,14 +163,6 @@ languageRouter
       next(error);
       }
     }
-
-    let newHead = await getNextWord(); 
-
-    await LanguageService.updateUsersLanguageHead(
-      req.app.get('db'),
-      req.user.id,
-      newHead.id
-      );
   })
 
 module.exports = languageRouter

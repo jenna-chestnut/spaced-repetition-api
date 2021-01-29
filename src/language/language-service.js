@@ -14,7 +14,6 @@ const LanguageService = {
   },
 
   updateUsersLanguageHead(db, user_id, head) {
-    console.log(user_id, head)
     return db
       .from('language')
       .update({ head })

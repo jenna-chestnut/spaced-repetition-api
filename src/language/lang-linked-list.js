@@ -47,12 +47,12 @@ class LinkedList {
     let positionCount = 0;
     let position = 0;
 
-    currNode.value.memory_value = currNode.value.memory_value * 2; // set our memory value accordingly
+    currNode.value.memory_value = (currNode.value.memory_value * 2); // set our memory value accordingly
     position = currNode.value.memory_value; // create our goal to push out to 
     currNode.value.correct_count++; // add one to our correct count
 
     // as long as there is a next node & we have spots left to push, change our variables & continue
-    while ((currNode.next !== null) && (positionCount !== position)) {  
+    while ((currNode.next !== null) && (positionCount !== position)) {
       currNode = currNode.next;
       positionCount++;
     }
@@ -62,7 +62,7 @@ class LinkedList {
     currNode.next = tempNode; // set our current node next to hold our inserted node
 
     // set our 'next' values for our items
-    !tempNode.next ? tempNode.value.next = null : tempNode.next.value.id;
+    tempNode.value.next = !tempNode.next ? null : tempNode.next.value.id;
     currNode.value.next = tempNode.value.id;
     this.head.value.next = this.head.next.value.id;
   }

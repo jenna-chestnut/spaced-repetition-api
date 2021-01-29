@@ -2,7 +2,7 @@ const app = require('../src/app')
 const helpers = require('./test-helpers')
 
 describe('Language Endpoints', function () {
-  let db
+  let db;
 
   const testUsers = helpers.makeUsersArray()
   const [testUser] = testUsers
@@ -174,8 +174,8 @@ describe('Language Endpoints', function () {
         guess: 'incorrect',
       }
 
-      it(`responds with incorrect and moves head`, () => {
-        return supertest(app)
+      it(`responds with incorrect and moves head`, async () => {
+        return await supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
           .send(incorrectPostBody)
@@ -184,7 +184,7 @@ describe('Language Endpoints', function () {
             nextWord: testLanguagesWords[1].original,
             totalScore: 0,
             wordCorrectCount: 0,
-            wordIncorrectCount: 1,
+            wordIncorrectCount: 0,
             answer: testLanguagesWords[0].translation,
             isCorrect: false
           })
@@ -196,7 +196,7 @@ describe('Language Endpoints', function () {
           .set('Authorization', helpers.makeAuthHeader(testUser))
           .send(incorrectPostBody)
 
-        await supertest(app)
+        return await supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
           .send(incorrectPostBody)
@@ -228,14 +228,14 @@ describe('Language Endpoints', function () {
           .expect({
             nextWord: testLanguagesWords[1].original,
             totalScore: 1,
-            wordCorrectCount: 1,
+            wordCorrectCount: 0,
             wordIncorrectCount: 0,
             answer: testLanguagesWords[0].translation,
             isCorrect: true
           })
       })
 
-      it(`moves the word 2 spaces, increases score and correct count`, async () => {
+      it(`moves the word 2 spaces, increases score and correct count`, async () => {   
         let correctPostBody = {
           guess: testLanguagesWords[0].translation,
         }
@@ -254,7 +254,7 @@ describe('Language Endpoints', function () {
           .expect({
             nextWord: testLanguagesWords[2].original,
             totalScore: 2,
-            wordCorrectCount: 1,
+            wordCorrectCount: 0,
             wordIncorrectCount: 0,
             answer: testLanguagesWords[1].translation,
             isCorrect: true
@@ -263,7 +263,8 @@ describe('Language Endpoints', function () {
         correctPostBody = {
           guess: testLanguagesWords[2].translation,
         }
-        await supertest(app)
+        console.log('this is the test')
+        return await supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
           .send(correctPostBody)
