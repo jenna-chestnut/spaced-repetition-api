@@ -20,7 +20,7 @@ languageRouter
           error: `You don't have any languages`,
         })
 
-      req.language = language
+      req.language = language;
       next()
     } catch (error) {
       next(error)
@@ -53,7 +53,7 @@ languageRouter
         req.language.id,
       )
 
-      const headWord = words[req.language.head - 1];
+      const headWord = words.find(el => el.id === req.language.head);
 
       res.status(200).json({
         nextWord: headWord.original, 
@@ -70,32 +70,24 @@ languageRouter
 
 languageRouter
   .post('/guess', async (req, res, next) => {
-    const { guess } = req.body;
+    const { body } = req;
 
-    if (!guess) {
+    if (!body || !body.guess) {
       return res.status(400).json({ error: `Missing 'guess' in request body`})
     }
-
-    await LanguageService.updateUsersLanguageHead(
-      req.app.get('db'),
-      req.user.id,
-      req.language.head + 1
-      );
 
     const getWords = async () => {
       const words = await LanguageService.getLanguageWords(
           req.app.get('db'),
           req.language.id,
       )
-      let last = await words.pop();
-      let sorted = await words.sort((a, b) => a.next - b.next); sorted.push(last)
-  
-      return await sorted;
+        return await words;
       }
 
-    const hIdx = req.language.head - 1;
+    const h = req.language.head;
     const words = await getWords();
-    const headWord = words[hIdx];
+    const headWord = {};
+    Object.assign(headWord, words.find(el => el.id === h));
 
     const wordsLinkedList = new LinkedList();
     words.forEach((el => {
@@ -104,8 +96,8 @@ languageRouter
 
     const updateWords = async () => {
       const words = await wordsLinkedList.all();
-      return await words.forEach(el => {     
-        LanguageService.updateLanguageWords(
+      await words.forEach(async el => {     
+        await LanguageService.updateLanguageWords(
           req.app.get('db'),
           el.id,
           el
@@ -113,25 +105,31 @@ languageRouter
       })
     }
 
-    if (guess === headWord.translation) {
+    const getNextWord = async () => {
+      await updateWords();
+      const newWords = await getWords();
+      return await newWords.find(el => el.id === wordsLinkedList.head.value.id);
+    }
+
+    if (body.guess === headWord.translation) {
       try{
-      wordsLinkedList.correct();
-      await LanguageService.updateUsersTotalScore(
+       wordsLinkedList.correct();
+        await LanguageService.updateUsersTotalScore(
         req.app.get('db'),
         req.user.id,
         req.language.total_score + 1,
         );
-      await updateWords();
-      const newWords = await getWords();
+        const nextWord = await getNextWord();
+      
 
-      return res.status(200).json({
-        nextWord: newWords[hIdx].original,
+        res.status(200).json({
+        nextWord: nextWord.original,
         totalScore: req.language.total_score + 1,
-        wordCorrectCount: newWords[hIdx].correct_count,
-        wordIncorrectCount: newWords[hIdx].incorrect_count,
+        wordCorrectCount: headWord.correct_count + 1,
+        wordIncorrectCount: headWord.incorrect_count,
         answer: headWord.translation,
         isCorrect: true
-      })
+        })
       }
       catch(error) {
         next(error)
@@ -141,14 +139,13 @@ languageRouter
     else {
       try {
       wordsLinkedList.incorrect();
-      await updateWords();
-      const newWords = await getWords();
+      const nextWord = await getNextWord();
       
-      return res.status(200).json({
-        nextWord: newWords[hIdx].original,
+      res.status(200).json({
+        nextWord: nextWord.original,
         totalScore: req.language.total_score,
-        wordCorrectCount: newWords[hIdx].correct_count,
-        wordIncorrectCount: newWords[hIdx].incorrect_count,
+        wordCorrectCount: headWord.correct_count,
+        wordIncorrectCount: headWord.incorrect_count + 1,
         answer: headWord.translation,
         isCorrect: false
       })
@@ -157,6 +154,14 @@ languageRouter
       next(error);
       }
     }
+
+    let newHead = await getNextWord(); 
+
+    await LanguageService.updateUsersLanguageHead(
+      req.app.get('db'),
+      req.user.id,
+      newHead.id
+      );
   })
 
 module.exports = languageRouter

@@ -57,7 +57,7 @@ class LinkedList {
       positionCount++;
     }
 
-    this.head = this.head.next; // set our head to it's next position (we always go 1 at a time)
+    this.head = this.head.next; // set our head to its next position (we always go 1 at a time)
     tempNode.next = currNode.next; // set our tempNode next from currNode's next (since we are inserting here)
     currNode.next = tempNode; // set our current node next to hold our inserted node
 
