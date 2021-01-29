@@ -129,8 +129,8 @@ languageRouter
         return await res.status(200).json({
         nextWord: nextWord.original,
         totalScore: req.language.total_score + 1,
-        wordCorrectCount: nextWord.correct_count,
-        wordIncorrectCount: nextWord.incorrect_count,
+        wordCorrectCount: headWord.correct_count + 1,
+        wordIncorrectCount: headWord.incorrect_count,
         answer: headWord.translation,
         isCorrect: true
         })
@@ -153,8 +153,8 @@ languageRouter
       return await res.status(200).json({
         nextWord: nextWord.original,
         totalScore: req.language.total_score,
-        wordCorrectCount: nextWord.correct_count,
-        wordIncorrectCount: nextWord.incorrect_count,
+        wordCorrectCount: headWord.correct_count,
+        wordIncorrectCount: headWord.incorrect_count + 1,
         answer: headWord.translation,
         isCorrect: false
       })
