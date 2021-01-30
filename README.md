@@ -1,4 +1,8 @@
 # Ehl - Spaced Repetition API
+
+[Live app](https://spaced-repetition-denim.vercel.app/)
+
+[Client-side repo](https://github.com/jenna-chestnut/spaced-repetition)
 ## Learn new French words, with the spaced repetition technique! 
 
 ---
