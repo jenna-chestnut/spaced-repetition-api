@@ -1,52 +1,78 @@
-# Spaced repetition API!
+# Ehl - Spaced Repetition API
+## Learn new French words, with the spaced repetition technique! 
 
-## Local dev setup
+---
 
-If using user `dunder-mifflin`:
+Ehl is an app created to demonstrate a possible platform for learning new words in a specified language. 
 
-```bash
-mv example.env .env
-createdb -U dunder-mifflin spaced-repetition
-createdb -U dunder-mifflin spaced-repetition-test
-```
+Learners start with a word, and the more often they correctly guess the translation, the less often they will see that word. If they guess incorrectly, the word will begin to show itself more frequently.
 
-If your `dunder-mifflin` user has a password be sure to set it in `.env` for all appropriate fields. Or if using a different user, update appropriately.
+This is accomplished using a linked list data structure and spaced repetition in the server-side app. COnditional rendering on the client shows the results of their guess, scores, and the correct translation (or next word, if they have guess correctly!)
 
-```bash
-npm install
-npm run migrate
-env MIGRATION_DB_NAME=spaced-repetition-test npm run migrate
-```
 
-And `npm test` should work at this point
+ --- 
 
-## Configuring Postgres
+### Tech stack  
+This server-side app was created with:    
+<img align="left" alt="Visual Studio Code" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/visual-studio-code/visual-studio-code.png" />
+<img align="left" alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+<img align="left" alt="NodeJS" src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" />
+<img align="left" alt="ExpressJS" src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" />
+<img align="left" alt="Heroku" src="https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white" />
+<img align="left" alt="Git" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/git/git.png" />
+<img align="left" alt="GitHub" width="26px" src="https://raw.githubusercontent.com/github/explore/78df643247d429f6cc873026c0622819ad797942/topics/github/github.png" />  
 
-For tests involving time to run properly, configure your Postgres database to run in the UTC timezone.
+<br/>
 
-1. Locate the `postgresql.conf` file for your Postgres installation.
-   1. E.g. for an OS X, Homebrew install: `/usr/local/var/postgres/postgresql.conf`
-   2. E.g. on Windows, _maybe_: `C:\Program Files\PostgreSQL\11.2\data\postgresql.conf`
-   3. E.g  on Ubuntu 18.04 probably: '/etc/postgresql/10/main/postgresql.conf'
-2. Find the `timezone` line and set it to `UTC`:
+---
 
-```conf
-# - Locale and Formatting -
+### Endpoints Tree
+**App🔻**     
 
-datestyle = 'iso, mdy'
-#intervalstyle = 'postgres'
-timezone = 'UTC'
-#timezone_abbreviations = 'Default'     # Select the set of available time zone
-```
+➖**MiddleWare Used🔻**   
+➖➖*Auth-Router w JWT*  
+➖➖*Check for User Language Function*
 
-## Scripts
+➖**Routes🔻**    
+➖**BASE URL: /api**   
 
-Start the application `npm start`
+➖➖*/language*
+(GET) - get all words and user's designated language details
+➖➖➖*/language/head*    
+(GET) - get user's next word to practice
 
-Start nodemon for the application `npm run dev`
+➖➖*/language/guess* 
+(POST) - submit user's guess and respond with results, total score, and next word
+  
+  
+## Available Scripts  
+  
+In the project directory, you can run:  
+  
+`npm start`  
+  
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-Run the tests mode `npm test`
+`npm run cypress:open` -> run in a seperate terminal
 
-Run the migrations up `npm run migrate`
+Launches the test runner in an interactive watch mode. You must have the server running on the client app using `npm start` prior to testing.
 
-Run the migrations down `npm run migrate -- 0`
+`npm run dev`
+
+Runs the app through a development server.
+
+`npm run migrate`
+
+Migrate tables in local database
+
+`npm run migrate:test`
+
+Migrate tables in local test database
+
+`heroku create` to create remote server (will need heroku account - see this link for info https://devcenter.heroku.com/categories/command-line)    
+`npm run deploy`  to:
+  
+- Run NPM audit  
+- Migrate tables in production server
+- Push latest commit to Heroku main branch of created app
