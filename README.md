@@ -11,7 +11,7 @@ Ehl is an app created to demonstrate a possible platform for learning new words 
 
 Learners start with a word, and the more often they correctly guess the translation, the less often they will see that word. If they guess incorrectly, the word will begin to show itself more frequently.
 
-This is accomplished using a linked list data structure and spaced repetition in the server-side app. COnditional rendering on the client shows the results of their guess, scores, and the correct translation (or next word, if they have guess correctly!)
+This is accomplished using a linked list data structure and spaced repetition in the server-side app. Conditional rendering on the client shows the results of their guess, scores, and the correct translation (or next word, if they have guessed correctly!)
 
 
  --- 

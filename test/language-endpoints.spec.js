@@ -263,7 +263,7 @@ describe('Language Endpoints', function () {
         correctPostBody = {
           guess: testLanguagesWords[2].translation,
         }
-        console.log('this is the test')
+        
         return await supertest(app)
           .post(`/api/language/guess`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
